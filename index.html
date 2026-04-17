@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTON'S PENCIL CASE • Eternal Blue Legend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --blue-1: #0f172a;
+            --blue-2: #1e40af;
+            --accent: #00d4ff;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, transform;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+        
+        body {
+            scroll-behavior: smooth;
+        }
+        
+        .hero-bg {
+            background: radial-gradient(circle at 30% 20%, #0f172a 0%, #1e40af 50%, #00d4ff 120%);
+        }
+        
+        .perspective-container {
+            perspective: 1200px;
+            perspective-origin: 50% 40%;
+        }
+        
+        .pencil-3d {
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .section-header {
+            position: relative;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            width: 64px;
+            height: 4px;
+            background: linear-gradient(to right, #00d4ff, #1e40af);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(3deg);
+            border-radius: 9999px;
+        }
+        
+        /* SCROLL ANIMATIONS */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(60px) rotateX(12deg);
+            transition: all 900ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0) rotateX(0deg);
+        }
+        
+        .scroll-slide-left {
+            opacity: 0;
+            transform: translateX(-120px) rotateY(-15deg);
+            transition: all 1100ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .scroll-slide-left.visible {
+            opacity: 1;
+            transform: translateX(0) rotateY(0deg);
+        }
+        
+        .scroll-slide-right {
+            opacity: 0;
+            transform: translateX(120px) rotateY(15deg);
+            transition: all 1100ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .scroll-slide-right.visible {
+            opacity: 1;
+            transform: translateX(0) rotateY(0deg);
+        }
+        
+        .scroll-pop-3d {
+            opacity: 0;
+            transform: scale(0.8) rotateX(25deg) rotateY(25deg);
+            transition: all 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .scroll-pop-3d.visible {
+            opacity: 1;
+            transform: scale(1) rotateX(0deg) rotateY(0deg);
+        }
+        
+        /* Parallax layers */
+        .parallax-layer {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Glass + 3D card effect */
+        .glass-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(24px);
+            box-shadow: 0 25px 50px -12px rgb(30 64 175 / 0.25),
+                        0 0 0 1px rgba(255,255,255,0.15) inset;
+        }
+        
+        .card-hover-3d:hover {
+            transform: translateY(-12px) rotateX(12deg) rotateY(12deg) scale(1.04);
+            box-shadow: 0 40px 70px -15px rgb(0 212 255 / 0.3);
+        }
+    </style>
+</head>
+<body class="bg-[#0a0f1c] text-white font-sans overflow-x-hidden">
+    <!-- NAVBAR – ultra premium with glass + 3D hover -->
+    <nav class="sticky top-0 z-50 border-b border-white/10 bg-[#0a0f1c]/70 backdrop-blur-2xl">
+        <div class="max-w-screen-2xl mx-auto px-10 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[#1e40af] flex items-center justify-center text-2xl shadow-[0_0_25px_-5px] shadow-[#00d4ff] rotate-12 hover:rotate-0">
+                    ✏️
+                </div>
+                <h1 class="text-4xl font-semibold tracking-[-2px] font-space">ANTON'S</h1>
+                <span class="text-4xl font-semibold tracking-[-2px] bg-gradient-to-r from-[#00d4ff] to-white bg-clip-text text-transparent">PENCIL CASE</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-x-10 text-sm font-medium uppercase tracking-widest">
+                <a onclick="document.getElementById('story').scrollIntoView({ behavior: 'smooth' })" class="hover:text-[#00d4ff] cursor-pointer">ORIGIN STORY</a>
+                <a onclick="document.getElementById('powers').scrollIntoView({ behavior: 'smooth' })" class="hover:text-[#00d4ff] cursor-pointer">POWERS</a>
+                <a onclick="document.getElementById('tributes').scrollIntoView({ behavior: 'smooth' })" class="hover:text-[#00d4ff] cursor-pointer">LEGEND SPEAKS</a>
+                <a onclick="document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' })" class="hover:text-[#00d4ff] cursor-pointer">IMMORTAL FRAME</a>
+            </div>
+            
+            <button onclick="launchConfetti()" 
+                    class="px-8 py-4 rounded-3xl bg-white text-[#0a0f1c] font-semibold flex items-center gap-x-3 hover:scale-110 hover:shadow-2xl hover:shadow-[#00d4ff]/50">
+                <i class="fa-solid fa-rocket"></i>
+                CROWN THIS LEGEND
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO – massive 3D tilt + parallax scroll -->
+    <header id="hero" class="hero-bg min-h-screen flex items-center relative">
+        <div class="max-w-screen-2xl mx-auto px-10 grid md:grid-cols-2 gap-16 items-center pt-20">
+            <!-- Text -->
+            <div class="space-y-10">
+                <div class="inline-flex items-center px-6 py-3 rounded-3xl bg-white/10 backdrop-blur-3xl border border-white/20 text-sm font-medium shadow-inner">
+                    <span class="w-2 h-2 bg-[#00d4ff] rounded-full animate-pulse mr-2"></span>
+                    UNDEFEATED SINCE 2023
+                </div>
+                
+                <h1 class="text-7xl md:text-[92px] leading-[0.95] font-semibold font-space tracking-[-4px]">
+                    THE ONLY<br>PENCIL CASE<br>THAT DESERVES<br>ITS OWN MUSEUM
+                </h1>
+                
+                <p class="max-w-md text-2xl text-[#a5c4ff] font-light">
+                    Hand-chosen. Battle-tested. Forever iconic.<br>
+                    This is <span class="text-white font-semibold">Anton's Pencil Case</span>.
+                </p>
+                
+                <div class="flex items-center gap-8">
+                    <div onclick="launchConfetti()" class="cursor-pointer flex items-center gap-4 group">
+                        <div class="flex">
+                            <div class="text-4xl group-active:scale-110">⭐</div>
+                            <div class="text-4xl group-active:scale-110 -ml-3">⭐</div>
+                            <div class="text-4xl group-active:scale-110 -ml-3">⭐</div>
+                            <div class="text-4xl group-active:scale-110 -ml-3">⭐</div>
+                            <div class="text-4xl group-active:scale-110 -ml-3">⭐</div>
+                        </div>
+                        <div class="leading-none">
+                            <div class="text-5xl font-semibold">∞</div>
+                            <div class="text-xs uppercase tracking-[3px]">stars given by reality</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="document.getElementById('powers').scrollIntoView({ behavior: 'smooth' })" 
+                            class="px-10 py-6 text-xl font-semibold rounded-3xl bg-white text-[#0a0f1c] hover:bg-[#00d4ff] hover:text-white flex items-center gap-x-4">
+                        EXPLORE ITS MAGIC
+                        <i class="fa-solid fa-arrow-down rotate-45"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 3D IMAGE -->
+            <div class="perspective-container relative flex justify-center items-center h-[520px] md:h-auto">
+                <div id="tilt-container" class="relative w-full max-w-[460px]">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#00d4ff]/30 to-transparent blur-3xl rounded-[100px] -rotate-12 scale-95"></div>
+                    
+                    <img id="pencil-image" 
+                         src="IMG_5633.jpeg"
+                         alt="Anton's Legendary Blue Pencil Case – photographed in perfect light"
+                         class="pencil-3d w-full rounded-3xl shadow-2xl border-8 border-white/80 drop-shadow-[0_40px_60px_-20px] drop-shadow-[#00d4ff]">
+                    
+                    <!-- Floating 3D badges -->
+                    <div class="absolute -top-6 -right-6 glass-card text-[#0a0f1c] text-xs font-bold px-6 py-3 rounded-3xl flex items-center gap-2 rotate-12 shadow-2xl">
+                        <i class="fa-solid fa-crown text-amber-400"></i>
+                        OFFICIALLY IMMORTAL
+                    </div>
+                    
+                    <div class="absolute -bottom-8 -left-6 glass-card text-[#0a0f1c] text-xs font-bold px-6 py-3 rounded-3xl flex items-center gap-2 -rotate-12 shadow-2xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        3 YEARS • ZERO DEFEATS
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll prompt with parallax -->
+        <div class="absolute bottom-12 left-1/2 flex flex-col items-center text-xs tracking-[2px] text-white/60">
+            SCROLL FOR PURE 3D GLORY
+            <i class="fa-solid fa-chevron-down mt-3 animate-bounce text-2xl"></i>
+        </div>
+        
+        <!-- Subtle parallax background orbs -->
+        <div id="orb1" class="parallax-layer absolute top-20 left-12 w-64 h-64 bg-[#00d4ff]/10 rounded-full blur-3xl"></div>
+        <div id="orb2" class="parallax-layer absolute bottom-32 right-12 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+    </header>
+
+    <!-- STORY SECTION – scroll slide + parallax side -->
+    <section id="story" class="max-w-screen-2xl mx-auto px-10 py-28">
+        <div class="grid md:grid-cols-12 gap-16 items-center">
+            <div class="md:col-span-7 scroll-reveal" id="story-text">
+                <h2 class="section-header text-6xl font-semibold font-space tracking-[-2px] mb-8">
+                    THE BLUE LEGEND<br>THAT REFUSES TO FADE
+                </h2>
+                <div class="prose prose-invert text-xl leading-relaxed max-w-lg">
+                    <p>Chosen in a single moment. Carried through every late-night study, every chaotic desk flip, every backpack avalanche.</p>
+                    <p class="font-medium">This pencil case didn't just survive school — it defined it. The zipper still sings. The fabric still glows. The vibe? Eternal.</p>
+                </div>
+                
+                <div class="mt-16 grid grid-cols-3 gap-8 text-center">
+                    <div class="scroll-pop-3d" id="stat-1">
+                        <div class="text-7xl font-semibold text-[#00d4ff]">3</div>
+                        <div class="uppercase text-sm tracking-widest mt-1">YEARS OF LOYALTY</div>
+                    </div>
+                    <div class="scroll-pop-3d" id="stat-2">
+                        <div class="text-7xl font-semibold text-[#00d4ff]">∞</div>
+                        <div class="uppercase text-sm tracking-widest mt-1">ADVENTURES SHARED</div>
+                    </div>
+                    <div class="scroll-pop-3d" id="stat-3">
+                        <div class="text-7xl font-semibold text-[#00d4ff]">1</div>
+                        <div class="uppercase text-sm tracking-widest mt-1">OWNER. FOREVER.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Parallax quote card -->
+            <div class="md:col-span-5 scroll-slide-right glass-card rounded-3xl p-12 text-[#0a0f1c] relative" id="quote-card">
+                <div class="text-8xl absolute -top-6 -left-6 text-[#00d4ff]/30">“</div>
+                <blockquote class="text-3xl font-light leading-tight">
+                    I don't own a pencil case.<br>
+                    The pencil case owns the entire narrative.
+                </blockquote>
+                <div class="mt-10 flex items-center gap-4">
+                    <div class="h-px w-12 bg-[#0a0f1c]"></div>
+                    <p class="uppercase font-medium">— Anton, the chosen one</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POWERS SECTION – horizontal scroll + 3D cards -->
+    <section id="powers" class="bg-[#05080f] py-20 overflow-hidden">
+        <div class="max-w-screen-2xl mx-auto px-10">
+            <div class="flex justify-between items-end mb-16">
+                <h2 class="text-6xl font-semibold font-space tracking-[-1px]">SUPERPOWERS<br>UNLOCKED IN 3D</h2>
+                <p class="text-[#a5c4ff] max-w-xs text-lg">Every detail engineered for legend status. Scroll sideways to feel the depth.</p>
+            </div>
+            
+            <div class="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide" id="powers-scroll">
+                <!-- Card 1 -->
+                <div class="glass-card min-w-[380px] rounded-3xl p-8 card-hover-3d snap-center">
+                    <div class="text-6xl mb-8">⚡</div>
+                    <h3 class="text-4xl font-semibold mb-4">Zipper That Defies Physics</h3>
+                    <p class="text-[#a5c4ff]">Glides like liquid metal. 1,247 documented smooth pulls. Still zero resistance. Pure satisfaction engineered daily.</p>
+                    <div class="mt-12 flex justify-between text-xs uppercase font-mono text-[#00d4ff]">
+                        <div>VERIFIED</div>
+                        <div>∞ SMOOTHNESS</div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="glass-card min-w-[380px] rounded-3xl p-8 card-hover-3d snap-center">
+                    <div class="text-6xl mb-8">🛡️</div>
+                    <h3 class="text-4xl font-semibold mb-4">Armor That Bends Reality</h3>
+                    <p class="text-[#a5c4ff]">Crushed, dropped, stuffed, soaked. The fabric laughs at chaos. Still looks like it left the factory yesterday.</p>
+                    <div class="mt-12 flex justify-between text-xs uppercase font-mono text-[#00d4ff]">
+                        <div>BATTLE PROVEN</div>
+                        <div>ZERO WEAR</div>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="glass-card min-w-[380px] rounded-3xl p-8 card-hover-3d snap-center">
+                    <div class="text-6xl mb-8">🌌</div>
+                    <h3 class="text-4xl font-semibold mb-4">Aesthetic Singularity</h3>
+                    <p class="text-[#a5c4ff]">That exact shade of royal blue. That tiny faded logo. The way light hits the edges. It’s not a case. It’s a vibe portal.</p>
+                    <div class="mt-12 flex justify-between text-xs uppercase font-mono text-[#00d4ff]">
+                        <div>ICON STATUS</div>
+                        <div>ACHIEVED</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRIBUTES – staggered 3D reveal (no teacher) -->
+    <section id="tributes" class="max-w-screen-2xl mx-auto px-10 py-28">
+        <h2 class="section-header text-6xl font-semibold font-space text-center mb-20">THE WORLD CAN'T STOP TALKING</h2>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Anton -->
+            <div class="glass-card rounded-3xl p-10 scroll-pop-3d" id="tribute-1">
+                <div class="flex text-amber-400 text-4xl mb-8">★★★★★</div>
+                <p class="text-2xl font-light leading-tight">"It's not just a pencil case. It's my emotional support object, my daily flex, and the reason I believe in good design."</p>
+                <div class="mt-12 text-[#00d4ff] font-medium">— Anton</div>
+            </div>
+            
+            <!-- Classmate -->
+            <div class="glass-card rounded-3xl p-10 scroll-pop-3d" id="tribute-2" style="animation-delay: 150ms">
+                <div class="flex text-amber-400 text-4xl mb-8">★★★★★</div>
+                <p class="text-2xl font-light leading-tight">"Every time I see it on the desk I feel personally attacked by how perfect it is. The GOAT of school supplies. No competition."</p>
+                <div class="mt-12 text-[#00d4ff] font-medium">— Slightly jealous classmate</div>
+            </div>
+            
+            <!-- New tribute – fellow legend -->
+            <div class="glass-card rounded-3xl p-10 scroll-pop-3d" id="tribute-3" style="animation-delay: 300ms">
+                <div class="flex text-amber-400 text-4xl mb-8">★★★★★</div>
+                <p class="text-2xl font-light leading-tight">"I’ve seen a lot of pencil cases in my life. None of them come close. This one has soul. It’s the final boss of stationery."</p>
+                <div class="mt-12 text-[#00d4ff] font-medium">— The stationery connoisseur</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY – 3D enhanced hero image again -->
+    <section id="gallery" class="py-20 bg-[#05080f]">
+        <div class="max-w-screen-2xl mx-auto px-10">
+            <div class="text-center mb-12">
+                <span class="px-8 py-3 bg-white/10 rounded-3xl text-sm uppercase tracking-widest">THE FRAME THAT BROKE THE INTERNET</span>
+            </div>
+            
+            <div class="perspective-container max-w-4xl mx-auto">
+                <div id="gallery-tilt" class="relative">
+                    <img src="IMG_5633.jpeg" 
+                         alt="Anton's Pencil Case – the definitive image"
+                         class="pencil-3d w-full rounded-3xl shadow-2xl border-[14px] border-white/90">
+                </div>
+            </div>
+            
+            <div class="text-center mt-10 text-[#a5c4ff] flex items-center justify-center gap-8 text-sm font-medium">
+                <div>📍 Still reigning supreme on Anton's desk</div>
+                <div class="h-px w-12 bg-white/30"></div>
+                <div>IMMORTALIZED • APRIL 2026</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="py-32 bg-gradient-to-b from-[#05080f] to-[#0a0f1c] relative overflow-hidden">
+        <div class="max-w-screen-2xl mx-auto px-10 text-center">
+            <h2 class="text-6xl md:text-7xl font-space font-semibold tracking-[-2px] max-w-2xl mx-auto leading-none">
+                BECOME PART OF THE LEGEND
+            </h2>
+            <p class="text-2xl text-[#a5c4ff] mt-6">One pencil case. One owner. One eternal story.</p>
+            
+            <button onclick="launchConfetti()" 
+                    class="mt-16 mx-auto flex items-center gap-x-6 text-2xl font-semibold px-14 py-8 bg-white text-[#0a0f1c] rounded-3xl hover:scale-110 active:scale-95 shadow-2xl shadow-[#00d4ff]/40">
+                <span>I ALSO WORSHIP THIS PENCIL CASE</span>
+                <i class="fa-solid fa-heart text-red-500 text-3xl"></i>
+            </button>
+            
+            <p class="mt-20 text-xs uppercase tracking-[2px] text-white/40">Crafted with obsessive attention to detail • Pure HTML, Tailwind &amp; next-level 3D interactions</p>
+        </div>
+    </section>
+
+    <footer class="bg-[#0a0f1c] py-8 border-t border-white/10 text-center text-xs text-white/40">
+        Made as the ultimate love letter to the greatest pencil case ever created.
+    </footer>
+
+    <script>
+        // Tailwind ready
+        function initTailwind() {
+            // No extra config needed
+        }
+
+        // 3D MOUSE TILT – main hero image
+        function enable3DTilt() {
+            const container = document.getElementById('tilt-container')
+            const image = document.getElementById('pencil-image')
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect()
+                const xPercent = (e.clientX - rect.left) / rect.width
+                const yPercent = (e.clientY - rect.top) / rect.height
+                
+                const rotateY = (xPercent - 0.5) * 35
+                const rotateX = (0.5 - yPercent) * 35
+                
+                image.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`
+            })
+            
+            container.addEventListener('mouseleave', () => {
+                image.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`
+            })
+        }
+        
+        // Gallery image also gets its own tilt
+        function enableGalleryTilt() {
+            const container = document.getElementById('gallery-tilt')
+            const image = container.querySelector('img')
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect()
+                const xPercent = (e.clientX - rect.left) / rect.width
+                const yPercent = (e.clientY - rect.top) / rect.height
+                
+                const rotateY = (xPercent - 0.5) * 28
+                const rotateX = (0.5 - yPercent) * 28
+                
+                image.style.transform = `perspective(1400px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+            })
+            
+            container.addEventListener('mouseleave', () => {
+                image.style.transform = `perspective(1400px) rotateX(0deg) rotateY(0deg)`
+            })
+        }
+        
+        // Parallax orbs in hero
+        function parallaxOrbs() {
+            const orb1 = document.getElementById('orb1')
+            const orb2 = document.getElementById('orb2')
+            
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY
+                orb1.style.transform = `translateY(${scrollY * 0.15}px)`
+                orb2.style.transform = `translateY(${scrollY * -0.12}px)`
+            })
+        }
+        
+        // Scroll reveal system with different effects
+        function initScrollReveals() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible')
+                    }
+                })
+            }, {
+                threshold: 0.25,
+                rootMargin: "0px 0px -80px 0px"
+            })
+            
+            // All scroll elements
+            document.querySelectorAll('.scroll-reveal, .scroll-slide-left, .scroll-slide-right, .scroll-pop-3d').forEach(el => {
+                observer.observe(el)
+            })
+            
+            // Special horizontal scroll momentum feel
+            const powersScroll = document.getElementById('powers-scroll')
+            if (powersScroll) {
+                powersScroll.style.scrollBehavior = 'smooth'
+            }
+        }
+        
+        // Confetti explosion – extra dramatic
+        function launchConfetti() {
+            const colors = ['#00d4ff', '#1e40af', '#ffffff', '#a5c4ff']
+            let count = 280
+            
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div')
+                confetti.style.position = 'fixed'
+                confetti.style.zIndex = '99999'
+                confetti.style.left = Math.random() * 100 + 'vw'
+                confetti.style.top = '-20px'
+                confetti.style.fontSize = Math.random() * 24 + 16 + 'px'
+                confetti.textContent = ['✏️', '📐', '🖊️', '⭐', '🔥'][Math.floor(Math.random() * 5)]
+                document.body.appendChild(confetti)
+                
+                const angle = Math.random() * 80 + 30
+                const duration = Math.random() * 3200 + 2800
+                
+                confetti.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(${window.innerHeight + 300}px) rotate(${angle * 12}deg)`, opacity: 0 }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.22, 1, 0.24, 1)'
+                })
+                
+                setTimeout(() => confetti.remove(), duration)
+            }
+            
+            // Extra text burst
+            const banner = document.createElement('div')
+            banner.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#00d4ff; color:#0a0f1c; padding:18px 40px; border-radius:9999px; font-weight:700; font-size:22px; white-space:nowrap; box-shadow:0 0 60px -10px #00d4ff; z-index:99999;'
+            banner.innerHTML = '🌟 LONG LIVE ANTON’S PENCIL CASE 🌟'
+            document.body.appendChild(banner)
+            
+            setTimeout(() => {
+                banner.style.transitionDuration = '600ms'
+                banner.style.opacity = '0'
+                banner.style.transform = 'translateX(-50%) translateY(40px)'
+                setTimeout(() => banner.remove(), 600)
+            }, 2600)
+        }
+        
+        // Keyboard easter egg for extra wow
+        function easterEgg() {
+            let code = ''
+            window.addEventListener('keypress', e => {
+                code += e.key
+                if (code.length > 12) code = code.slice(-12)
+                if (code.includes('pencilcase')) {
+                    launchConfetti()
+                    launchConfetti()
+                    code = ''
+                }
+            })
+        }
+        
+        // Master init
+        window.onload = function() {
+            initTailwind()
+            enable3DTilt()
+            enableGalleryTilt()
+            parallaxOrbs()
+            initScrollReveals()
+            easterEgg()
+            
+            console.log('%c✅ Anton’s Pencil Case website loaded with maximum 3D polish. You’re ready to impress.', 'color:#00d4ff; font-size:13px; font-weight:700')
+        }
+    </script>
+</body>
+</html>
